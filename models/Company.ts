@@ -7,6 +7,7 @@ export interface ICompany extends Document {
   companyPhone: string
   industry: string
   companySize: string
+  website?: string // Added this field
   address: {
     street: string
     city: string
@@ -18,14 +19,18 @@ export interface ICompany extends Document {
     logo?: string
     primaryColor: string
     secondaryColor: string
-    companyWebsite?: string
+    companyDescription?: string // Added this field
   }
   subscription: {
     plan: "free" | "basic" | "premium" | "enterprise"
+    status: "active" | "pending" | "cancelled" | "expired" // Added this field
     employeeLimit: number
     qrCodesGenerated: number
+    employeesAdded: number // Added this field
     qrCodeLimit: number
-    expiresAt?: Date
+    price: number // Added this field
+    startDate: Date // Added this field
+    endDate?: Date // Added this field
   }
   adminUser: {
     name: string
@@ -48,6 +53,7 @@ export interface ICompany extends Document {
     smsNotifications: boolean
     analyticsEnabled: boolean
   }
+  isActive: boolean // Added this field
   createdAt: Date
   updatedAt: Date
 }
@@ -91,6 +97,10 @@ const CompanySchema = new Schema<ICompany>(
       required: true,
       enum: ["1-10", "11-50", "51-200", "201-500", "500+"],
     },
+    website: {
+      type: String,
+      trim: true,
+    },
     address: {
       street: { type: String, required: true },
       city: { type: String, required: true },
@@ -101,8 +111,8 @@ const CompanySchema = new Schema<ICompany>(
     branding: {
       logo: String,
       primaryColor: { type: String, default: "#0077C0" },
-      secondaryColor: { type: String, default: "#434343" },
-      companyWebsite: String,
+      secondaryColor: { type: String, default: "#FFFFFF" },
+      companyDescription: String,
     },
     subscription: {
       plan: {
@@ -110,14 +120,22 @@ const CompanySchema = new Schema<ICompany>(
         enum: ["free", "basic", "premium", "enterprise"],
         default: "free",
       },
+      status: {
+        type: String,
+        enum: ["active", "pending", "cancelled", "expired"],
+        default: "active",
+      },
       employeeLimit: { type: Number, default: 5 },
       qrCodesGenerated: { type: Number, default: 0 },
-      qrCodeLimit: { type: Number, default: 50 },
-      expiresAt: Date,
+      employeesAdded: { type: Number, default: 0 },
+      qrCodeLimit: { type: Number, default: 5 },
+      price: { type: Number, default: 0 },
+      startDate: { type: Date, default: Date.now },
+      endDate: Date,
     },
     adminUser: {
       name: { type: String, required: true },
-      email: { type: String, required: true },
+      email: { type: String, required: true, lowercase: true },
       password: { type: String, required: true },
       role: {
         type: String,
@@ -147,6 +165,7 @@ const CompanySchema = new Schema<ICompany>(
       smsNotifications: { type: Boolean, default: false },
       analyticsEnabled: { type: Boolean, default: true },
     },
+    isActive: { type: Boolean, default: true },
   },
   {
     timestamps: true,

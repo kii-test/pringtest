@@ -15,21 +15,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
-    // Find company by email
-    const company = await Company.findOne({ email: email.toLowerCase() })
+    // Find company by admin email (this is key - looking for adminUser.email, not companyEmail)
+    const company = await Company.findOne({
+      "adminUser.email": email.toLowerCase(),
+      isActive: true
+    })
+
     if (!company) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
     // Check password
-    const isPasswordValid = await bcrypt.compare(password, company.password)
+    const isPasswordValid = await bcrypt.compare(password, company.adminUser.password)
+
     if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
     // Remove password from response
     const companyResponse = company.toObject()
-    delete companyResponse.password
+    delete companyResponse.adminUser.password
 
     return NextResponse.json({
       message: "Login successful",

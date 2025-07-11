@@ -21,6 +21,8 @@ import {
   Star,
   Menu,
   X,
+  CheckCircle,
+  Play,
 } from "lucide-react"
 
 export default function HomePage() {
@@ -38,7 +40,110 @@ export default function HomePage() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+// --------------------------------------------------------------
 
+  const personalFeatures = [
+    {
+      icon: QrCode,
+      title: "Personal QR Profile",
+      description: "Create your professional digital identity with a custom QR code",
+    },
+    {
+      icon: Smartphone,
+      title: "Mobile Optimized",
+      description: "Perfect viewing experience on all devices and screen sizes",
+    },
+    {
+      icon: Shield,
+      title: "Privacy Control",
+      description: "Control who can access your information with approval requests",
+    },
+    {
+      icon: Globe,
+      title: "Global Access",
+      description: "Share your profile instantly with anyone, anywhere in the world",
+    },
+  ]
+
+  const businessFeatures = [
+    {
+      icon: Users,
+      title: "Team Management",
+      description: "Manage unlimited employees and their professional QR profiles",
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics Dashboard",
+      description: "Track profile views, engagement, and networking insights",
+    },
+    {
+      icon: Building2,
+      title: "Brand Customization",
+      description: "Customize QR codes with your company branding and colors",
+    },
+    {
+      icon: Zap,
+      title: "Bulk Operations",
+      description: "Generate and manage hundreds of QR codes with ease",
+    },
+  ]
+
+  const personalPlans = [
+    {
+      name: "Free",
+      price: "₹0",
+      period: "forever",
+      description: "Perfect for individuals getting started",
+      features: ["1 QR Profile", "Basic Customization", "Mobile Responsive", "Email Support"],
+      popular: false,
+      cta: "Get Started Free",
+      href: "/register",
+    },
+    {
+      name: "Pro",
+      price: "₹299",
+      period: "month",
+      description: "Advanced features for professionals",
+      features: ["Unlimited QR Profiles", "Advanced Analytics", "Custom Branding", "Priority Support", "API Access"],
+      popular: true,
+      cta: "Start Pro Trial",
+      href: "/register?plan=pro",
+    },
+  ]
+
+  const businessPlans = [
+    {
+      name: "Startup",
+      price: "₹999",
+      period: "month",
+      description: "Perfect for small teams",
+      features: ["Up to 25 Employees", "Team Analytics", "Basic Branding", "Email Support"],
+      popular: false,
+      cta: "Start Free Trial",
+      href: "/corporate/register?plan=startup",
+    },
+    {
+      name: "Business",
+      price: "₹2,999",
+      period: "month",
+      description: "Ideal for growing companies",
+      features: ["Up to 100 Employees", "Advanced Analytics", "Full Branding", "Priority Support", "API Integration"],
+      popular: true,
+      cta: "Start Free Trial",
+      href: "/corporate/register?plan=business",
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      period: "contact us",
+      description: "For large organizations",
+      features: ["Unlimited Employees", "Custom Features", "Dedicated Support", "On-premise Option", "SLA Guarantee"],
+      popular: false,
+      cta: "Contact Sales",
+      href: "/contact",
+    },
+  ]
+  // --------------------------------------------------------------
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Particles Background */}

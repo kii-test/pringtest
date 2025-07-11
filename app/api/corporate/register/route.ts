@@ -8,54 +8,92 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const { companyName, email, password, industry, companySize, contactPerson, phone, website, address } = body
+    const {
+      companyName,
+      companyEmail,
+      companyPhone,
+      industry,
+      companySize,
+      website,
+      address,
+      adminUser,
+      subscription,
+    } = body
 
     // Validation
-    if (!companyName || !email || !password || !industry || !companySize || !contactPerson || !phone || !address) {
-      return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 })
+    if (!companyName || !companyEmail || !companyPhone || !industry || !companySize) {
+      return NextResponse.json({ error: "Required company fields are missing" }, { status: 400 })
+    }
+
+    if (!address || !address.street || !address.city || !address.state || !address.zipCode || !address.country) {
+      return NextResponse.json({ error: "Complete address is required" }, { status: 400 })
+    }
+
+    if (!adminUser || !adminUser.name || !adminUser.email || !adminUser.password) {
+      return NextResponse.json({ error: "Admin user information is required" }, { status: 400 })
+    }
+
+    if (!subscription || !subscription.plan) {
+      return NextResponse.json({ error: "Subscription plan is required" }, { status: 400 })
     }
 
     // Check if company already exists
-    const existingCompany = await Company.findOne({ email: email.toLowerCase() })
+    const existingCompany = await Company.findOne({
+      $or: [{ companyEmail: companyEmail.toLowerCase() }, { companyName }],
+    })
+
     if (existingCompany) {
-      return NextResponse.json({ error: "Company already exists with this email" }, { status: 409 })
+      return NextResponse.json({ error: "Company with this name or email already exists" }, { status: 409 })
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    // Hash admin password
+    const hashedPassword = await bcrypt.hash(adminUser.password, 12)
 
     // Create company
     const company = new Company({
       companyName,
-      email: email.toLowerCase(),
-      password: hashedPassword,
+      companyEmail: companyEmail.toLowerCase(),
+      companyPhone,
       industry,
       companySize,
-      contactPerson,
-      phone,
-      website: website || undefined,
-      address,
+      website: website || "",
+      address: {
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode,
+        country: address.country,
+      },
+      adminUser: {
+        name: adminUser.name,
+        email: adminUser.email.toLowerCase(),
+        password: hashedPassword,
+      },
       subscription: {
-        plan: "free",
-        employeeLimit: 5,
-        qrCodeLimit: 50,
+        plan: subscription.plan,
+        status: subscription.plan === "free" ? "active" : "pending",
+        employeeLimit: subscription.employeeLimit,
+        qrCodeLimit: subscription.qrCodeLimit,
+        price: subscription.price,
         qrCodesGenerated: 0,
-        isActive: true,
+        employeesAdded: 0,
         startDate: new Date(),
+        endDate: subscription.plan === "free" ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       },
       branding: {
         primaryColor: "#0077C0",
         secondaryColor: "#FFFFFF",
         logo: "",
+        companyDescription: "",
       },
-      status: "active",
+      isActive: true,
     })
 
     await company.save()
 
     // Remove password from response
     const companyResponse = company.toObject()
-    delete companyResponse.password
+    delete companyResponse.adminUser.password
 
     return NextResponse.json({
       message: "Company registered successfully",
@@ -66,12 +104,13 @@ export async function POST(request: NextRequest) {
 
     // Handle MongoDB validation errors
     if (error.name === "ValidationError") {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      const errors = Object.values(error.errors).map((err: any) => err.message)
+      return NextResponse.json({ error: errors.join(", ") }, { status: 400 })
     }
 
     // Handle duplicate key errors
     if (error.code === 11000) {
-      return NextResponse.json({ error: "Company already exists with this email" }, { status: 409 })
+      return NextResponse.json({ error: "Company with this information already exists" }, { status: 409 })
     }
 
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

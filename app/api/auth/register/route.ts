@@ -8,23 +8,33 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const { name, email, mobile, password, dateOfBirth, gender, typeOfWork } = body
+    const { name, email, mobile, password, typeOfWork, bio } = body
 
     // Validation
-    if (!password || !email || !mobile || !name || !typeOfWork) {
-      return NextResponse.json(
-        { error: "Name, email, mobile, password, and type of work are required" },
-        { status: 400 },
-      )
+    if (!name || !email || !mobile || !password || !typeOfWork) {
+      return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 })
     }
 
-    // Check if user already exists
+    // Validate mobile number (basic validation)
+    if (!mobile.trim()) {
+      return NextResponse.json({ error: "Mobile number is required" }, { status: 400 })
+    }
+
+    // Check if user already exists with email or mobile
     const existingUser = await User.findOne({
-      $or: [{ email }, { mobile }],
+      $or: [
+        { email: email.toLowerCase() },
+        { mobile: mobile.trim() },
+      ],
     })
 
     if (existingUser) {
-      return NextResponse.json({ error: "User already exists with this email or mobile number" }, { status: 409 })
+      if (existingUser.email === email.toLowerCase()) {
+        return NextResponse.json({ error: "User already exists with this email" }, { status: 409 })
+      }
+      if (existingUser.mobile === mobile.trim()) {
+        return NextResponse.json({ error: "User already exists with this mobile number" }, { status: 409 })
+      }
     }
 
     // Hash password
@@ -32,13 +42,14 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const user = new User({
-      name,
-      email,
-      mobile,
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      mobile: mobile.trim(),
       password: hashedPassword,
-      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : new Date(),
-      gender: gender || "prefer-not-to-say",
-      typeOfWork,
+      typeOfWork: typeOfWork.trim(),
+      bio: bio ? bio.trim() : "",
+      userType: "individual", // Default to individual
+      isActive: true,
     })
 
     await user.save()
@@ -48,7 +59,7 @@ export async function POST(request: NextRequest) {
     delete userResponse.password
 
     return NextResponse.json({
-      message: "User created successfully",
+      message: "User registered successfully",
       user: userResponse,
     })
   } catch (error: any) {
@@ -61,7 +72,13 @@ export async function POST(request: NextRequest) {
 
     // Handle duplicate key errors
     if (error.code === 11000) {
-      return NextResponse.json({ error: "User already exists with this email or mobile number" }, { status: 409 })
+      if (error.keyPattern?.email) {
+        return NextResponse.json({ error: "User already exists with this email" }, { status: 409 })
+      }
+      if (error.keyPattern?.mobile) {
+        return NextResponse.json({ error: "User already exists with this mobile number" }, { status: 409 })
+      }
+      return NextResponse.json({ error: "User already exists" }, { status: 409 })
     }
 
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

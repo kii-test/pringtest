@@ -174,7 +174,7 @@ export default function CorporateDashboardPage() {
             <Button
               variant="outline"
               onClick={handleLogout}
-              className="border-gray-700 text-white hover:bg-gray-800 bg-transparent"
+              className="b-style text-base flex items-center rounded-full "
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -186,7 +186,7 @@ export default function CorporateDashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className=" border border-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">Total Employees</p>
@@ -199,7 +199,7 @@ export default function CorporateDashboardPage() {
             <p className="text-sm text-gray-500 mt-2">{stats?.activeEmployees || 0} active</p>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className=" border border-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">QR Codes Generated</p>
@@ -214,7 +214,7 @@ export default function CorporateDashboardPage() {
             </p>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className=" border border-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">Total Scans</p>
@@ -227,7 +227,7 @@ export default function CorporateDashboardPage() {
             <p className="text-sm text-gray-500 mt-2">+{stats?.recentScans || 0} this week</p>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <div className=" border border-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-400">Engagement Rate</p>
@@ -309,8 +309,8 @@ function EmployeesTab({
   const router = useRouter()
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg">
-      <div className="bg-gradient-to-r from-brand-blue to-blue-600 text-white p-6 rounded-t-lg">
+    <div className=" border border-gray-800 rounded-lg">
+      <div className=" text-white p-6 rounded-t-lg">
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold flex items-center">
@@ -321,7 +321,7 @@ function EmployeesTab({
           </div>
           <Button
             onClick={() => router.push("/corporate/employees/add")}
-            className="bg-white/20 hover:bg-white/30 text-white border-0"
+            className="b-style px-6 py-2.5 text-base flex items-center rounded-full"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Employee
@@ -334,7 +334,7 @@ function EmployeesTab({
             <Users className="h-16 w-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No Employees Yet</h3>
             <p className="text-gray-400 mb-6">Start by adding your first team member</p>
-            <Button onClick={() => router.push("/corporate/employees/add")} className="bg-brand-blue hover:bg-blue-700">
+            <Button onClick={() => router.push("/corporate/employees/add")} className="b-style text-base  rounded-full">
               <Plus className="h-4 w-4 mr-2" />
               Add First Employee
             </Button>
@@ -373,14 +373,14 @@ function EmployeesTab({
                       size="sm"
                       variant="outline"
                       onClick={() => router.push(`/corporate/employees/${employee._id}`)}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                      className="b-style text-base flex items-center rounded-full"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
                     <Button
                       size="sm"
                       onClick={() => router.push(`/corporate/employees/${employee._id}/edit`)}
-                      className="bg-brand-blue hover:bg-blue-700"
+                      className="b-style  text-base flex items-center rounded-full"
                     >
                       Edit
                     </Button>
@@ -416,7 +416,7 @@ function QRCodesTab({ employees, company }: { employees: Employee[]; company: Co
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg">
+    <div className=" border border-gray-800 rounded-lg">
       <div className="bg-gradient-to-r from-black to-gray-800 text-white p-6 rounded-t-lg">
         <div className="flex justify-between items-center">
           <div>
@@ -426,7 +426,7 @@ function QRCodesTab({ employees, company }: { employees: Employee[]; company: Co
             </h3>
             <p className="text-gray-300 mt-1">Generate and manage QR codes for your employees</p>
           </div>
-          <Button onClick={handleBulkDownload} className="bg-white/20 hover:bg-white/30 text-white border-0">
+          <Button onClick={handleBulkDownload} className="b-style  text-base flex items-center rounded-full">
             <Download className="h-4 w-4 mr-2" />
             Download All
           </Button>
@@ -453,12 +453,12 @@ function QRCodesTab({ employees, company }: { employees: Employee[]; company: Co
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-800 bg-transparent"
+                    className="flex-1 b-style text-base flex items-center rounded-full"
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" className="flex-1 bg-brand-blue hover:bg-blue-700">
+                  <Button size="sm" className="flex-1 b-style">
                     <Download className="h-4 w-4 mr-1" />
                     Download
                   </Button>
@@ -474,8 +474,8 @@ function QRCodesTab({ employees, company }: { employees: Employee[]; company: Co
 
 function AnalyticsTab({ stats }: { stats: DashboardStats | null }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg">
-      <div className="bg-gradient-to-r from-brand-blue to-blue-600 text-white p-6 rounded-t-lg">
+    <div className=" border border-gray-800 rounded-lg">
+      <div className=" text-white p-6 rounded-t-lg">
         <h3 className="text-xl font-bold flex items-center">
           <BarChart3 className="h-5 w-5 mr-2" />
           Analytics & Reports
@@ -489,7 +489,7 @@ function AnalyticsTab({ stats }: { stats: DashboardStats | null }) {
             <h3 className="text-lg font-semibold text-white mb-4">Top Departments</h3>
             <div className="space-y-3">
               {stats?.topDepartments?.map((dept, index) => (
-                <div key={dept.department} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                <div key={dept.department} className="flex items-center justify-between p-3  rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="bg-brand-blue text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold">
                       {index + 1}
@@ -544,7 +544,7 @@ function AnalyticsTab({ stats }: { stats: DashboardStats | null }) {
 
 function SettingsTab({ company }: { company: Company }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg">
+    <div className=" border border-gray-800 rounded-lg">
       <div className="bg-gradient-to-r from-black to-gray-800 text-white p-6 rounded-t-lg">
         <h3 className="text-xl font-bold flex items-center">
           <Settings className="h-5 w-5 mr-2" />
@@ -582,10 +582,10 @@ function SettingsTab({ company }: { company: Company }) {
             <h3 className="text-lg font-semibold text-white mb-4 border-b border-gray-700 pb-2">
               Subscription Details
             </h3>
-            <div className="bg-gradient-to-r from-brand-blue to-blue-600 text-white p-6 rounded-xl">
+            <div className=" text-white p-6 rounded-xl">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-xl font-semibold capitalize">{company.subscription.plan} Plan</h4>
-                <Button className="bg-white/20 hover:bg-white/30 text-white border-0">Upgrade Plan</Button>
+                <Button className="b-style text-base flex items-center rounded-full">Upgrade Plan</Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -610,13 +610,13 @@ function SettingsTab({ company }: { company: Company }) {
 
           {/* Action Buttons */}
           <div className="flex space-x-4">
-            <Button className="bg-brand-blue hover:bg-blue-700">
+            <Button className="b-style text-base flex items-center rounded-full">
               <Settings className="h-4 w-4 mr-2" />
               Edit Company Profile
             </Button>
             <Button
               variant="outline"
-              className="border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white bg-transparent"
+              className="b-style text-base flex items-center rounded-full"
             >
               <Download className="h-4 w-4 mr-2" />
               Export Data

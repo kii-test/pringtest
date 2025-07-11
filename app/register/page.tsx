@@ -11,6 +11,11 @@ import { Label } from "@/components/ui/label"
 import { QrCode, Eye, EyeOff } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 
+const validateMobile = (mobile: string): boolean => {
+  // Basic mobile validation - adjust regex based on your requirements
+  const mobileRegex = /^[+]?[\d\s\-\(\)]{10,}$/
+  return mobileRegex.test(mobile.trim())
+}
 export default function RegisterPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
@@ -22,7 +27,9 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
     typeOfWork: "",
-  })
+  }
+  
+)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,6 +53,15 @@ export default function RegisterPage() {
           variant: "destructive",
         })
         return
+      }
+      
+      if (!validateMobile(formData.mobile)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid mobile number",
+        variant: "destructive",
+      })
+      return
       }
 
       const response = await fetch("/api/auth/register", {
@@ -121,7 +137,7 @@ export default function RegisterPage() {
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
@@ -136,7 +152,7 @@ export default function RegisterPage() {
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
@@ -151,7 +167,7 @@ export default function RegisterPage() {
               value={formData.mobile}
               onChange={(e) => handleInputChange("mobile", e.target.value)}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
@@ -167,7 +183,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 required
-                className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+                className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
               />
               <Button
                 type="button"
@@ -192,7 +208,7 @@ export default function RegisterPage() {
               value={formData.confirmPassword}
               onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
@@ -207,13 +223,13 @@ export default function RegisterPage() {
               value={formData.typeOfWork}
               onChange={(e) => handleInputChange("typeOfWork", e.target.value)}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-brand-blue hover:bg-blue-700 py-3 text-lg font-medium"
+            className="w-full b-style py-3 text-lg font-medium"
             disabled={loading}
           >
             {loading ? "Creating Account..." : "Create Account"}

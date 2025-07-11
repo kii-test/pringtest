@@ -388,12 +388,12 @@ function RequestAccessView({ onRequestAccess, requestSent }: { onRequestAccess: 
         </div>
 
         {!requestSent ? (
-          <Button onClick={onRequestAccess} size="lg" className="bg-brand-blue hover:bg-blue-700 px-12 py-4 text-lg">
+          <Button onClick={onRequestAccess} size="lg" className="b-style px-12 py-4 text-lg">
             Request Access to Profile
           </Button>
         ) : (
           <div className="space-y-4">
-            <Button disabled size="lg" className="px-12 py-4 text-lg">
+            <Button disabled size="lg" className="b-style px-12 py-4 text-lg">
               Request Sent ✓
             </Button>
             <p className="text-brand-dark font-medium">Check your email for updates on your request</p>

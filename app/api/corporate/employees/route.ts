@@ -20,7 +20,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid company ID" }, { status: 400 })
     }
 
-    const employees = await Employee.find({ companyId: new mongoose.Types.ObjectId(companyId) }).sort({ createdAt: -1 })
+    // Find employees using the Employee model
+    const employees = await Employee.find({
+      companyId: new mongoose.Types.ObjectId(companyId),
+    }).sort({ createdAt: -1 })
 
     return NextResponse.json({
       employees: employees.map((emp) => emp.toObject()),
@@ -36,24 +39,27 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const {
-      companyId,
-      employeeId,
-      firstName,
-      lastName,
-      email,
-      mobile,
+    const { 
+      companyId, 
+      name, 
+      email, 
+      phone, 
+      department, 
+      position, 
+      bio, 
+      linkedIn, 
+      twitter, 
+      website, 
+      qrCodeEmail,
       dateOfBirth,
       gender,
-      department,
-      position,
       employeeType,
       startDate,
-      manager,
+      manager
     } = body
 
     // Validation
-    if (!companyId || !employeeId || !firstName || !lastName || !email || !mobile) {
+    if (!companyId || !name || !email || !department || !position || !phone || !dateOfBirth || !gender || !employeeType || !startDate) {
       return NextResponse.json({ error: "Required fields are missing" }, { status: 400 })
     }
 
@@ -68,8 +74,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check employee limit
-    const currentEmployeeCount = await Employee.countDocuments({ companyId: new mongoose.Types.ObjectId(companyId) })
-    if (currentEmployeeCount >= company.subscription.employeeLimit) {
+    const currentEmployeeCount = await Employee.countDocuments({
+      companyId: new mongoose.Types.ObjectId(companyId),
+    })
+
+    if (company.subscription.employeeLimit !== -1 && currentEmployeeCount >= company.subscription.employeeLimit) {
       return NextResponse.json(
         {
           error: `Employee limit reached. Current plan allows ${company.subscription.employeeLimit} employees.`,
@@ -78,64 +87,87 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if employee ID already exists for this company
+    // Check if email already exists for this company
     const existingEmployee = await Employee.findOne({
       companyId: new mongoose.Types.ObjectId(companyId),
-      employeeId,
+      "personalInfo.email": email.toLowerCase(),
     })
-    if (existingEmployee) {
-      return NextResponse.json({ error: "Employee ID already exists" }, { status: 409 })
-    }
 
-    // Check if email already exists for this company (to ensure QR code linking)
-    const existingEmailEmployee = await Employee.findOne({
-      companyId: new mongoose.Types.ObjectId(companyId),
-      "personalInfo.email": email,
-    })
-    if (existingEmailEmployee) {
+    if (existingEmployee) {
       return NextResponse.json({ error: "Employee with this email already exists" }, { status: 409 })
     }
 
+    // Generate unique employee ID
+    const employeeCount = await Employee.countDocuments({ companyId: new mongoose.Types.ObjectId(companyId) })
+    const employeeId = `EMP${String(employeeCount + 1).padStart(4, '0')}`
+
     // Generate QR code for employee - linked to official email
-    const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/corporate/employee/${companyId}/${employeeId}?email=${encodeURIComponent(email)}`
+    const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/profile/${companyId}-${employeeId}?email=${encodeURIComponent(email)}`
     const qrCodeDataUrl = await QRCode.toDataURL(profileUrl, {
       width: 300,
       margin: 2,
       color: {
-        dark: company.branding.primaryColor || "#0077C0",
+        dark: company.branding?.primaryColor || "#0077C0",
         light: "#FFFFFF",
       },
     })
 
-    // Create employee
-    const employee = new Employee({
+    // Parse the name into first and last name
+    const nameParts = name.trim().split(' ')
+    const firstName = nameParts[0] || ''
+    const lastName = nameParts.slice(1).join(' ') || ''
+
+    // Prepare employee data according to Employee schema
+    const employeeData = {
       companyId: new mongoose.Types.ObjectId(companyId),
       employeeId,
+      
       personalInfo: {
         firstName,
         lastName,
-        email, // Official company email - QR code is linked to this
-        mobile,
+        email: email.toLowerCase(),
+        mobile: phone,
         dateOfBirth: new Date(dateOfBirth),
         gender,
+        profilePicture: '',
       },
+
       workInfo: {
         department,
         position,
         employeeType,
         startDate: new Date(startDate),
-        manager: manager || undefined,
+        manager: manager || '',
       },
+
       qrCode: qrCodeDataUrl,
+      linkedEmail: qrCodeEmail || email.toLowerCase(),
+      
       qrCodeStats: {
         totalScans: 0,
         uniqueScans: 0,
       },
-      status: "active",
-      // Link QR code to official email for security
-      linkedEmail: email,
-    })
 
+      socialLinks: {
+        linkedin: linkedIn || '',
+        twitter: twitter || '',
+        instagram: '',
+        facebook: '',
+      },
+
+      customLinks: [],
+
+      permissions: {
+        canEditProfile: true,
+        canViewAnalytics: false,
+        canDownloadQR: true,
+      },
+
+      status: 'active',
+    }
+
+    // Create employee using the Employee model
+    const employee = new Employee(employeeData)
     await employee.save()
 
     // Update company QR codes generated count
@@ -157,7 +189,13 @@ export async function POST(request: NextRequest) {
 
     // Handle duplicate key errors
     if (error.code === 11000) {
-      return NextResponse.json({ error: "Employee with this ID or email already exists" }, { status: 409 })
+      if (error.keyPattern?.linkedEmail) {
+        return NextResponse.json({ error: "An employee with this email is already linked to a QR code" }, { status: 409 })
+      }
+      if (error.keyPattern?.employeeId) {
+        return NextResponse.json({ error: "Employee ID conflict occurred" }, { status: 409 })
+      }
+      return NextResponse.json({ error: "Duplicate employee data found" }, { status: 409 })
     }
 
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

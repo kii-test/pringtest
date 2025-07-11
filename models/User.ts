@@ -14,69 +14,116 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    mobile: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
     password: {
       type: String,
-      required: true,
-      minlength: 6,
+      required: function () {
+        return this.userType !== "employee"
+      },
     },
-    dateOfBirth: {
-      type: Date,
-      required: false,
-    },
-    gender: {
+    mobile: {
       type: String,
-      enum: ["male", "female", "other", "prefer-not-to-say"],
-      default: "prefer-not-to-say",
+      required: true, // Make it required to avoid null values
+      unique: true,   // Add unique constraint
+      trim: true,
+    },
+    userType: {
+      type: String,
+      enum: ["individual", "employee"],
+      default: "individual",
     },
     typeOfWork: {
       type: String,
-      required: true,
+      default: "",
+      trim: true,
+    },
+    bio: {
+      type: String,
+      default: "",
       trim: true,
     },
     profilePicture: {
       type: String,
       default: "",
     },
+
+    // Company-related fields for employees
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: function () {
+        return this.userType === "employee"
+      },
+    },
+    department: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    position: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // Social media links
     socialLinks: {
       linkedin: { type: String, default: "" },
       instagram: { type: String, default: "" },
       facebook: { type: String, default: "" },
       twitter: { type: String, default: "" },
+      website: { type: String, default: "" },
     },
+
+    // Custom links for "Other Useful Links"
     customLinks: [
       {
         name: { type: String, required: true },
         url: { type: String, required: true },
       },
     ],
+
+    // QR Code
     qrCode: {
       type: String,
       default: "",
+    },
+    linkedEmail: {
+      type: String,
+      default: "",
+      lowercase: true,
+      trim: true,
     },
     qrCodeStats: {
       totalScans: { type: Number, default: 0 },
       uniqueScans: { type: Number, default: 0 },
       lastScanned: { type: Date },
+      scanHistory: [
+        {
+          scannedAt: { type: Date, default: Date.now },
+          scannedBy: { type: String },
+          location: { type: String },
+          device: { type: String },
+        },
+      ],
     },
-    privacySettings: {
-      requireApproval: { type: Boolean, default: true },
-      emailNotifications: { type: Boolean, default: true },
-      smsNotifications: { type: Boolean, default: true },
+
+    // Employee permissions (for corporate employees)
+    permissions: {
+      canEditProfile: { type: Boolean, default: true },
+      canViewAnalytics: { type: Boolean, default: false },
+      canDownloadQR: { type: Boolean, default: true },
     },
-    isVerified: {
+
+    // Status
+    isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
-    status: {
-      type: String,
-      enum: ["active", "inactive", "suspended"],
-      default: "active",
+
+    // Privacy settings
+    isPublic: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -84,9 +131,10 @@ const UserSchema = new mongoose.Schema(
   },
 )
 
-// Indexes for better performance
-UserSchema.index({ email: 1 })
-UserSchema.index({ mobile: 1 })
-UserSchema.index({ typeOfWork: 1 })
+// Indexes - Remove duplicate email index since it's already unique: true
+UserSchema.index({ companyId: 1, userType: 1 })
+UserSchema.index({ name: 1 })
+UserSchema.index({ department: 1 })
+UserSchema.index({ position: 1 })
 
 export default mongoose.models.User || mongoose.model("User", UserSchema)

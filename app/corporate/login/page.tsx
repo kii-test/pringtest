@@ -83,7 +83,7 @@ export default function CorporateLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white font-medium">
-              Company Email
+              Company Admin Email
             </Label>
             <Input
               id="email"

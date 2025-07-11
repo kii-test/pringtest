@@ -89,7 +89,7 @@ export default function LoginPage() {
               value={formData.identifier}
               onChange={(e) => setFormData((prev) => ({ ...prev, identifier: e.target.value }))}
               required
-              className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+              className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
             />
           </div>
 
@@ -105,7 +105,7 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                 required
-                className="bg-gray-900 border-gray-700 text-white placeholder-gray-400 focus:border-brand-blue"
+                className="b-style text-white placeholder-gray-400 focus:border-brand-blue"
               />
               <Button
                 type="button"
@@ -121,7 +121,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full bg-brand-blue hover:bg-blue-700 py-3 text-lg font-medium"
+            className="w-full b-style py-3 text-lg font-medium"
             disabled={loading}
           >
             {loading ? "Signing In..." : "Sign In"}

@@ -210,7 +210,7 @@ export default function DashboardPage() {
           {/* Menu with Edit Profile and Logout */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800 bg-transparent">
+              <Button variant="outline" className="b-style">
                 <Menu className="h-4 w-4 mr-2" />
                 
               </Button>
@@ -220,11 +220,11 @@ export default function DashboardPage() {
                 onClick={() => setShowEditProfile(true)}
                 className="text-white hover:bg-gray-800 cursor-pointer"
               >
-                <Edit3 className="h-4 w-4 mr-2" />
+                <Edit3 className=" b-style h-4 w-4 mr-2" />
                 Edit Profile
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="text-white hover:bg-gray-800 cursor-pointer">
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className=" b-style h-4 w-4 mr-2" />
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -234,7 +234,7 @@ export default function DashboardPage() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-brand-blue to-blue-600 p-8 rounded-lg mb-8">
+        <div className=" border border-gray-800 p-8 rounded-lg mb-8">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
             {/* Profile Info */}
             <div className="flex-1 text-center lg:text-left">
@@ -276,7 +276,7 @@ export default function DashboardPage() {
                     asChild
                     size="sm"
                     variant="secondary"
-                    className="bg-white/20 hover:bg-white/30 text-white border-0 cursor-pointer"
+                    className="b-style cursor-pointer"
                   >
                     <div>
                       <Camera className="h-4 w-4 mr-2" />
@@ -325,7 +325,7 @@ export default function DashboardPage() {
         {/* Edit Profile Modal/Overlay */}
         {showEditProfile && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-black border border-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="bg-gradient-to-r from-black to-gray-800 text-white p-6 rounded-t-lg flex justify-between items-center">
                 <div>
                   <h3 className="text-xl font-bold flex items-center">
@@ -338,7 +338,7 @@ export default function DashboardPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowEditProfile(false)}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-800 bg-transparent"
+                  className="b-style"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -559,7 +559,7 @@ function ProfileForm({
             type="button"
             onClick={addCustomLink}
             disabled={!newCustomLink.name || !newCustomLink.url}
-            className="bg-brand-blue hover:bg-blue-700 text-white"
+            className="b-style"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Link
@@ -570,7 +570,7 @@ function ProfileForm({
       <Button
         type="submit"
         disabled={updating}
-        className="w-full bg-brand-blue hover:bg-blue-700 text-white py-3 text-lg font-medium"
+        className="w-full b-style py-3 text-lg font-medium"
       >
         {updating ? "Updating Profile..." : "Update Profile"}
       </Button>
@@ -580,7 +580,7 @@ function ProfileForm({
 
 function QRCodeTab({ user, qrCodeUrl }: { user: UserProfile; qrCodeUrl: string }) {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg">
+    <div className=" border border-gray-800 rounded-lg">
       <div className="bg-gradient-to-r from-brand-blue to-blue-600 text-white p-6 rounded-t-lg">
         <h3 className="text-xl font-bold flex items-center">
           <QrCode className="h-5 w-5 mr-2" />
@@ -593,7 +593,7 @@ function QRCodeTab({ user, qrCodeUrl }: { user: UserProfile; qrCodeUrl: string }
       <div className="p-8 text-center space-y-8">
         {qrCodeUrl ? (
           <>
-            <div className="bg-gray-800 p-8 rounded-2xl">
+            <div className=" p-8 rounded-2xl">
               <div className="relative inline-block">
                 <img
                   src={qrCodeUrl || "/placeholder.svg"}
@@ -618,7 +618,7 @@ function QRCodeTab({ user, qrCodeUrl }: { user: UserProfile; qrCodeUrl: string }
               </p>
               <div className="flex justify-center space-x-4">
                 <Button
-                  className="bg-brand-blue hover:bg-blue-700 px-8"
+                  className="b-style px-8"
                   onClick={() => {
                     const link = document.createElement("a")
                     link.href = qrCodeUrl
@@ -632,7 +632,7 @@ function QRCodeTab({ user, qrCodeUrl }: { user: UserProfile; qrCodeUrl: string }
 
                 <Button
                   variant="outline"
-                  className="border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white px-8 bg-transparent"
+                  className="b-style px-8"
                   onClick={() => {
                     const profileLink = `${process.env.NEXT_PUBLIC_APP_URL}/profile/${user._id}`
                     navigator.clipboard.writeText(profileLink)
